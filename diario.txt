@@ -1,3 +1,26 @@
+2015.09.22
+insertar registros en artículo y categoría:
+ articulo.sql
+ categoria.sql
+
+instalar monodevelop (y otros relacionados)
+ monodevelop
+ monodevelop-database
+ monodevelop-nunit
+ monodevelop-versioncontrol
+
+ monodoc-browser
+
+hacemos un PHolaMundo para ver que todo funciona
+
+
+2015.09.17
+Instalar el lamp de bitnami:
+https://bitnami.com/stack/lamp
+usuario: root contraseña de desarrollo: sistemas
+crear base de datos dbprueba
+ dbprueba.sql
+
 2015.09.15
 
 luisvelasco@I4-00:~$ sudo apt-get install git
