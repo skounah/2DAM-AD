@@ -1,26 +1,20 @@
 using System;
 using System.Data;
 using Gtk;
-using MySql.Data.MySqlClient;
 using System.Collections.Generic;
+using PArticulo;
 
 public partial class MainWindow: Gtk.Window
 {	
 	public MainWindow (): base (Gtk.WindowType.Toplevel)
 	{
-		Build ();
-		// ESTABLECER CONEXION CON BD 
+		Build (); 
 		Console.WriteLine ("MainWndow constructor.");
 
-		IDbConnection dbConnection = new MySqlConnection (
-			"Database=bdpruebas;Data Source= localhost;user ID=root;Password=sistemas"
-		);
-		// ABRIR CONEXION 
-		dbConnection.Open ();
 
 
-		// SELECCIONAR EN BASE DE DATOS
-		IDbCommand dbCommand = dbConnection.CreateCommand ();
+
+		IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
 		dbCommand.CommandText = "select * from articulo";
 
 		//CREA EL DATAREADER
@@ -61,7 +55,7 @@ public partial class MainWindow: Gtk.Window
 
 
 		dataReader.Close ();
-		dbConnection.Close ();
+		App.Instance.DbConnection.Close ();
 	}
 	// METODO QUE COJE EL NOMBRES DE LAS COLUMNAS DE LA BD Y LAS PASA A UN ARRAY
 	private string[] getColumnNames(IDataReader dataReader){
