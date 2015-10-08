@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using Gtk;
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
@@ -10,19 +11,20 @@ public partial class MainWindow: Gtk.Window
 		Build ();
 		// ESTABLECER CONEXION CON BD 
 		Console.WriteLine ("MainWndow constructor.");
-		MySqlConnection mySqlConnection = new MySqlConnection (
+
+		IDbConnection dbConnection = new MySqlConnection (
 			"Database=bdpruebas;Data Source= localhost;user ID=root;Password=sistemas"
 		);
 		// ABRIR CONEXION 
-		mySqlConnection.Open ();
+		dbConnection.Open ();
 
 
 		// SELECCIONAR EN BASE DE DATOS
-		MySqlCommand mySqlCommand = mySqlConnection.CreateCommand ();
-		mySqlCommand.CommandText = "select * from articulo";
+		IDbCommand dbCommand = dbConnection.CreateCommand ();
+		dbCommand.CommandText = "select * from articulo";
 
 		//CREA EL DATAREADER
-		MySqlDataReader mySqlDataReader = mySqlCommand.ExecuteReader ();
+		IDataReader dataReader = dbCommand.ExecuteReader ();
 
 		// AÑADO LAS COLUMNAS DEL TREEVIEW DE FORMA MANUAL 
 		/*TreeView.AppendColumn("categoria", new CellRendererText(), "text",0);
@@ -31,12 +33,12 @@ public partial class MainWindow: Gtk.Window
 		TreeView.AppendColumn ("precio", new CellRendererText (), "text", 3);*/
 
 		//COJE LAS COLUMNAS DEL TREEVIEW DE FORMA AUTOMATICA CON EL METODO GETCOLUMNAMES
-		string[] columnNames = getColumnNames (mySqlDataReader);
+		string[] columnNames = getColumnNames (dataReader);
 		for (int index=0; index<columnNames.Length; index++) {
 			TreeView.AppendColumn (columnNames [index], new CellRendererText (), "text", index);
 		}
 
-		Type[] types = getTypes (mySqlDataReader.FieldCount);
+		Type[] types = getTypes (dataReader.FieldCount);
 		ListStore listStore = new ListStore (types);
 
 		// ESTABLECER MODELO DE CONTROLADOR DE VISTA (MVC)
@@ -46,27 +48,27 @@ public partial class MainWindow: Gtk.Window
 
 
 		// COJE LAS FILAS AUTOMATICAMENTE CON EL METODO GETVALUES
-		while (mySqlDataReader.Read()) {
-			string[] values = getValues (mySqlDataReader);
+		while (dataReader.Read()) {
+			string[] values = getValues (dataReader);
 			listStore.AppendValues (values);
 
 		}
 		// COJE DIFERENTES FILAS MANUALMENTE
-		//listStore.AppendValues (mySqlDataReader [0].ToString(), mySqlDataReader[1], mySqlDataReader[2].ToString(), mySqlDataReader [3].ToString()); ESTA LLLENDO 
-		//Console.WriteLine ("categoria={0} id={1} nombre{2} precio{3}",mySqlDataReader[0], mySqlDataReader [1], mySqlDataReader [2],mySqlDataReader [3]); ESO SOLO ESCRIBE 
+		//listStore.AppendValues (dataReader [0].ToString(), dataReader[1], dataReader[2].ToString(), dataReader [3].ToString()); ESTA LLLENDO 
+		//Console.WriteLine ("categoria={0} id={1} nombre{2} precio{3}",dataReader[0], dataReader [1], dataReader [2],dataReader [3]); ESO SOLO ESCRIBE 
 		//listStore.AppendValues (2L, "Nombre del segundo", 2.00); ESTAS ESCRITAS MANUALMENTE
 		//listStore.AppendValues (3L, "Nombre del tercero", 3.20); "						"
 
 
-		mySqlDataReader.Close ();
-		mySqlConnection.Close ();
+		dataReader.Close ();
+		dbConnection.Close ();
 	}
 	// METODO QUE COJE EL NOMBRES DE LAS COLUMNAS DE LA BD Y LAS PASA A UN ARRAY
-	private string[] getColumnNames(MySqlDataReader mySqlDataReader){
+	private string[] getColumnNames(IDataReader dataReader){
 		List<string> columnNames = new List<string> ();
-		int contador = mySqlDataReader.FieldCount;
+		int contador = dataReader.FieldCount;
 		for (int i=0;i<contador;i++)
-			columnNames.Add (mySqlDataReader.GetName (i));
+			columnNames.Add (dataReader.GetName (i));
 		return columnNames.ToArray();
 	}
 	// METODO QUE COJE LOS TIPOS DE LA BD Y LOS PASA A UN ARRAY DE TIPOS CON TODO STRING
@@ -77,11 +79,11 @@ public partial class MainWindow: Gtk.Window
 	    return types.ToArray();
 	}
 	// METODO QUE DEVUELVE UN STRING CON LOS VALORES DE LAS FILAS TRANSFORMADOS A ARRAY 
-	private string[]getValues(MySqlDataReader mySqlDataReader){
+	private string[]getValues(IDataReader dataReader){
 		List<string> values = new List<string> ();
-		int count = mySqlDataReader.FieldCount;
+		int count = dataReader.FieldCount;
 		for (int i=0;i<count;i++)
-			values.Add (mySqlDataReader [i].ToString ());
+			values.Add (dataReader [i].ToString ());
 		return values.ToArray();
 	}
 
