@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using Gtk;
+using System.Collections;
 using System.Collections.Generic;
 using PArticulo;
 
@@ -9,55 +10,56 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow (): base (Gtk.WindowType.Toplevel)
 	{
 		Build (); 
+
 		Console.WriteLine ("MainWndow constructor.");
-
-
-
-
-		IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
+		IDbConnection dbconnection = App.Instance.DbConnection;
+		IDbCommand dbCommand = dbconnection.CreateCommand ();
 		dbCommand.CommandText = "select * from articulo";
 
 		//CREA EL DATAREADER
 		IDataReader dataReader = dbCommand.ExecuteReader ();
 
-		// AÑADO LAS COLUMNAS DEL TREEVIEW DE FORMA MANUAL 
-		/*TreeView.AppendColumn("categoria", new CellRendererText(), "text",0);
-		TreeView.AppendColumn("id", new CellRendererText (), "text", 1);
-		TreeView.AppendColumn("nombre", new CellRendererText (), "text", 2);
-		TreeView.AppendColumn ("precio", new CellRendererText (), "text", 3);*/
 
 		//COJE LAS COLUMNAS DEL TREEVIEW DE FORMA AUTOMATICA CON EL METODO GETCOLUMNAMES
 		string[] columnNames = getColumnNames (dataReader);
+		CellRendererText cellRendererText = new CellRendererText ();
 		for (int index=0; index<columnNames.Length; index++) {
-			TreeView.AppendColumn (columnNames [index], new CellRendererText (), "text", index);
+		// ESTABLECEMOS EL MODELO CON DELEGADO PARA LUEGO PODER TRATAR EL TEXTO RENDERIZADO
+			int column = index;
+			TreeView.AppendColumn (columnNames [index], cellRendererText, 
+            	delegate(TreeViewColumn tree_column, CellRenderer cell, TreeModel tree_model, TreeIter iter) {
+				IList row = (IList)tree_model.GetValue(iter,0);
+				if (row[column] == DBNull.Value)
+					cellRendererText.Text = "sin asignar" ;
+				else 
+					//string value = tree_model.GetValue(iter, column).ToString();
+					cellRendererText.Text= row[column].ToString();
+			});
 		}
 
-		Type[] types = getTypes (dataReader.FieldCount);
-		ListStore listStore = new ListStore (types);
-
-		// ESTABLECER MODELO DE CONTROLADOR DE VISTA (MVC)
-		listStore = new ListStore (typeof(String), typeof(String), typeof (String), typeof (String));
-		TreeView.Model = listStore;
 
 
+		//Type[] types = getTypes (dataReader.FieldCount);
+		ListStore listStore = new ListStore (typeof(IList));
 
-		// COJE LAS FILAS AUTOMATICAMENTE CON EL METODO GETVALUES
+
+		//listStore = new ListStore (typeof(String), typeof(String), typeof (String), typeof (String));
+
+
+		//COJE LAS FILAS AUTOMATICAMENTE CON EL METODO GETVALUES
 		while (dataReader.Read()) {
-			string[] values = getValues (dataReader);
+			//string[] values = getValues (dataReader);
+			IList values= getValues (dataReader);
 			listStore.AppendValues (values);
 
 		}
-		// COJE DIFERENTES FILAS MANUALMENTE
-		//listStore.AppendValues (dataReader [0].ToString(), dataReader[1], dataReader[2].ToString(), dataReader [3].ToString()); ESTA LLLENDO 
-		//Console.WriteLine ("categoria={0} id={1} nombre{2} precio{3}",dataReader[0], dataReader [1], dataReader [2],dataReader [3]); ESO SOLO ESCRIBE 
-		//listStore.AppendValues (2L, "Nombre del segundo", 2.00); ESTAS ESCRITAS MANUALMENTE
-		//listStore.AppendValues (3L, "Nombre del tercero", 3.20); "						"
-
-
 		dataReader.Close ();
+		TreeView.Model = listStore;
 		App.Instance.DbConnection.Close ();
 	}
-	// METODO QUE COJE EL NOMBRES DE LAS COLUMNAS DE LA BD Y LAS PASA A UN ARRAY
+
+
+	//METODO QUE COJE EL NOMBRES DE LAS COLUMNAS DE LA BD Y LAS PASA A UN ARRAY
 	private string[] getColumnNames(IDataReader dataReader){
 		List<string> columnNames = new List<string> ();
 		int contador = dataReader.FieldCount;
@@ -65,25 +67,29 @@ public partial class MainWindow: Gtk.Window
 			columnNames.Add (dataReader.GetName (i));
 		return columnNames.ToArray();
 	}
-	// METODO QUE COJE LOS TIPOS DE LA BD Y LOS PASA A UN ARRAY DE TIPOS CON TODO STRING
+
+
+	//METODO QUE COJE LOS TIPOS DE LA BD Y LOS PASA A UN ARRAY DE TIPOS CON TODO STRING
 	private Type [] getTypes(int count){
 			List<Type> types = new List<Type>();
 		for (int i=0; i<count; i++) 
 			types.Add (typeof(String));
-	    return types.ToArray();
+	    return types.ToArray ();
 	}
-	// METODO QUE DEVUELVE UN STRING CON LOS VALORES DE LAS FILAS TRANSFORMADOS A ARRAY 
-	private string[]getValues(IDataReader dataReader){
-		List<string> values = new List<string> ();
+	//METODO QUE DEVUELVE UN STRING CON LOS VALORES DE LAS FILAS TRANSFORMADOS A ARRAY 
+	private IList getValues(IDataReader dataReader){
+		List<object> values = new List<object> ();
 		int count = dataReader.FieldCount;
 		for (int i=0;i<count;i++)
 			values.Add (dataReader [i].ToString ());
-		return values.ToArray();
+		return values;
 	}
+
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
 		Application.Quit ();
 		a.RetVal = true;
 	}
+
 }

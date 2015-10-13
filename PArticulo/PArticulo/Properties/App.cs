@@ -20,8 +20,7 @@ namespace PArticulo{
 			get {
 				if(dbConnection == null){
 					dbConnection = new MySqlConnection(
-					"Database=bdpruebas;Data Source= localhost;user ID=root;Password=sistemas"
-					);
+					"Database=bdpruebas;Data Source= localhost;user ID=root;Password=sistemas");
 					dbConnection.Open ();
 				}
 				return dbConnection;}
