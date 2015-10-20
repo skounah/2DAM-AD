@@ -3,7 +3,8 @@ using System.Data;
 using Gtk;
 using System.Collections;
 using System.Collections.Generic;
-using PArticulo;
+
+using SerpisAd;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -14,7 +15,6 @@ public partial class MainWindow: Gtk.Window
 		Console.WriteLine ("MainWndow constructor.");
 		QueryResult queryResult = PersisterHelp.Get ("select * from articulo");
 		TreeViewHelper.Fill (TreeView, queryResult);
-		App.Instance.DbConnection.Close ();
 	}
 
 
