@@ -16,8 +16,7 @@ public partial class MainWindow: Gtk.Window
 		QueryResult queryResult = PersisterHelp.Get ("select * from articulo");
 		TreeViewHelper.Fill (TreeView, queryResult);
 	}
-
-
+	
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
 		Application.Quit ();
