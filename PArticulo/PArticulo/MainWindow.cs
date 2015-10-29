@@ -1,9 +1,7 @@
 using System;
 using System.Data;
 using Gtk;
-using System.Collections;
-using System.Collections.Generic;
-
+using PArticulo;
 using SerpisAd;
 
 public partial class MainWindow: Gtk.Window
@@ -16,11 +14,19 @@ public partial class MainWindow: Gtk.Window
 		QueryResult queryResult = PersisterHelp.Get ("select * from articulo");
 		TreeViewHelper.Fill (TreeView, queryResult);
 	}
-	
+
+
+	protected void OnNewActionActivated (object sender, EventArgs e)
+	{
+		new ArticuloView();
+	}
+
+
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
 		Application.Quit ();
 		a.RetVal = true;
 	}
+
 
 }
