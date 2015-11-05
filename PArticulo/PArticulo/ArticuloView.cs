@@ -34,31 +34,18 @@ namespace PArticulo
 
 
 			string nombre = entryNombre.Text;
-			addParameter (dbCommand, "nombre", nombre);
+			DbCommandHelper.addParameter (dbCommand, "nombre", nombre);
 		
-			object categoria = GetId (boxCategoria); 
-			addParameter (dbCommand, "categoria", categoria);
+			object categoria = ComboBoxHelper.GetId (boxCategoria); 
+			DbCommandHelper.addParameter (dbCommand, "categoria", categoria);
 
 			decimal precio = Convert.ToDecimal(spinPrecio.Value);
-			addParameter (dbCommand, "precio", precio);
+			DbCommandHelper.addParameter (dbCommand, "precio", precio);
 
 		
 			dbCommand.ExecuteNonQuery();
 		}
 
-		private static void addParameter(IDbCommand dbCommand, string name, object value){
-			IDbDataParameter dbDataParameter = dbCommand.CreateParameter ();
-			dbDataParameter.ParameterName = name;
-			dbDataParameter.Value = value;
-			dbCommand.Parameters.Add (dbDataParameter);
-		}
-
-		public static object GetId(ComboBox comboBox) {
-			TreeIter treeIter;
-			comboBox.GetActiveIter (out treeIter);
-			IList row = (IList)comboBox.Model.GetValue (treeIter, 0); //ILIST 0 por que es el unico elemento aunque dentro vallan las columnas
-			return row [0];
-		}
 	}
 }
 
