@@ -4,8 +4,11 @@ namespace PCategoria
 {
 	public class CategoriaView
 	{
-		public CategoriaView ()
+		public CategoriaView () :
+			base(Gtk.WindowType.Toplevel)
 		{
+
+
 		}
 	}
 }

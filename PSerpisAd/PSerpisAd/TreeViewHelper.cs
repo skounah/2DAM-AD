@@ -5,9 +5,10 @@ using System.Collections;
 namespace SerpisAd
 {
 	public class TreeViewHelper
-	{
+	{	//RELLENO DEL TREEVIEW
 		public static void Fill(TreeView treeView,QueryResult queryResult )
 		{
+			removeAllColumns (treeView);
 			string[] columnNames = queryResult.ColumnNames;
 			CellRendererText cellRendererText = new CellRendererText ();
 
@@ -23,12 +24,18 @@ namespace SerpisAd
 						cellRendererText.Text= row[column].ToString();
 				});
 			}
-
+			//RELLENO DE DATOS SEGUN EL MODELO.
 			ListStore listStore = new ListStore (typeof(IList));
 
 			foreach (IList row in (queryResult.Rows))
 				listStore.AppendValues (row);
 			treeView.Model= listStore;
+		}
+		//METODO PARA BORRAR COLUMNAS 
+		private static void removeAllColumns(TreeView treeView) {
+			TreeViewColumn[] treeViewColumns = treeView.Columns;
+			foreach (TreeViewColumn treeViewColumn in treeViewColumns)
+				treeView.RemoveColumn(treeViewColumn);
 		}
 	}
 }

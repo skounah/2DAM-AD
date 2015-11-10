@@ -44,6 +44,7 @@ namespace PArticulo
 
 		
 			dbCommand.ExecuteNonQuery();
+			Destroy ();
 		}
 
 	}

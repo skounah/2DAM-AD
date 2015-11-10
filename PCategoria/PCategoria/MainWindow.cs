@@ -12,11 +12,14 @@ public partial class MainWindow: Gtk.Window
 
 		Console.WriteLine ("MainWndow constructor.");
 		QueryResult queryResult = PersisterHelp.Get ("select * from categoria");
-		TreeViewHelper.Fill (treeView, queryResult);
+		TreeViewHelper.Fill(treeView, queryResult);
 
-		/*newAction.Activated += delegate{
-			new ArticuloView();
-		};*/
+		//TreeView.Columns();
+		//TreeView.Refresh ();
+
+		newAction.Activated += delegate{
+			new CategoriaView();
+		};
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)

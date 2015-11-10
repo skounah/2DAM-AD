@@ -11,8 +11,7 @@ public partial class MainWindow: Gtk.Window
 		Build (); 
 
 		Console.WriteLine ("MainWndow constructor.");
-		QueryResult queryResult = PersisterHelp.Get ("select * from articulo");
-		TreeViewHelper.Fill (TreeView, queryResult);
+		fillTreeview ();
 		
 		//TreeView.Columns();
 		//TreeView.Refresh ();
@@ -20,8 +19,17 @@ public partial class MainWindow: Gtk.Window
 		newAction.Activated += delegate{
 			new ArticuloView();
 		};
+
+		refreshAction.Activated += delegate {
+			fillTreeview();
+		};
+
 	}
 
+	protected void fillTreeview(){
+		QueryResult queryResult = PersisterHelp.Get ("select * from articulo");
+		TreeViewHelper.Fill (TreeView, queryResult);
+	}
 	/*protected void OnNewActionActivated (object sender, EventArgs e) {  ESTE METODO SIRVE SI HAS ACITVADO LA SEÑAL EN EL BOTON
 		new ArticuloView();
 	}*/
