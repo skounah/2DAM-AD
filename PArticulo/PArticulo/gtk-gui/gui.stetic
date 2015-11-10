@@ -20,7 +20,6 @@
         <property name="Type">Action</property>
         <property name="Label" translatable="yes" />
         <property name="StockId">gtk-new</property>
-        <signal name="Activated" handler="OnNewActionActivated" />
       </action>
     </action-group>
     <property name="MemberName" />
