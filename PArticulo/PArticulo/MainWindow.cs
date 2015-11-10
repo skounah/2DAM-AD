@@ -3,6 +3,7 @@ using System.Data;
 using Gtk;
 using PArticulo;
 using SerpisAd;
+using System.Collections;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -23,7 +24,27 @@ public partial class MainWindow: Gtk.Window
 		refreshAction.Activated += delegate {
 			fillTreeview();
 		};
+		deleteAction.Activated += delegate{
+			object id = GetId(TreeView);
+			Console.WriteLine("click en delete action id={0}", id);
+		};
 
+		TreeView.Selection.Changed += delegate(object sender, EventArgs e) {
+			Console.WriteLine("Cambio en el Selection action");
+			deleteAction.Sensitive = GetId(TreeView) !=null; // SI NO HAY NADA SELECCIONADO NO DEJA EJECUTAR LA ACCION DE BORRAR
+		};
+
+	}
+
+	public static object GetId(TreeView treeView) {
+		TreeIter treeIter;
+			if (!treeView.Selection.GetSelected (out treeIter)) {
+				return null;
+			}
+		treeView.Selection.GetSelected(out treeIter);
+		treeView.Model.GetValue(treeIter, 0);
+		IList row  = (IList)treeView.Model.GetValue(treeIter, 0);
+		return row [0];
 	}
 
 	protected void fillTreeview(){
