@@ -10,7 +10,7 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow (): base (Gtk.WindowType.Toplevel)
 	{
 		Build (); 
-
+		Title = "Artículo";
 		Console.WriteLine ("MainWndow constructor.");
 		fillTreeview ();
 		
@@ -25,26 +25,27 @@ public partial class MainWindow: Gtk.Window
 			fillTreeview();
 		};
 		deleteAction.Activated += delegate{
-			object id = GetId(TreeView);
+			object id = TreeViewHelper.GetId(TreeView);
 			Console.WriteLine("click en delete action id={0}", id);
+			delete(id);
 		};
 
 		TreeView.Selection.Changed += delegate(object sender, EventArgs e) {
 			Console.WriteLine("Cambio en el Selection action");
-			deleteAction.Sensitive = GetId(TreeView) !=null; // SI NO HAY NADA SELECCIONADO NO DEJA EJECUTAR LA ACCION DE BORRAR
+			deleteAction.Sensitive = TreeViewHelper.IsSelected(TreeView); // SI NO HAY NADA SELECCIONADO NO DEJA EJECUTAR LA ACCION DE BORRAR
 		};
-
+		deleteAction.Sensitive = false;
 	}
 
-	public static object GetId(TreeView treeView) {
-		TreeIter treeIter;
-			if (!treeView.Selection.GetSelected (out treeIter)) {
-				return null;
-			}
-		treeView.Selection.GetSelected(out treeIter);
-		treeView.Model.GetValue(treeIter, 0);
-		IList row  = (IList)treeView.Model.GetValue(treeIter, 0);
-		return row [0];
+
+	private void delete(object id) {
+		if (!WindowHelper.ConfirmDelete(this))
+				Console.WriteLine ("Dice que eliminar NO");
+		IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
+		dbCommand.CommandText = "delete from articulo where id = @id";
+		DbCommandHelper.addParameter (dbCommand, "id", id);
+		int filasEliminadas = dbCommand.ExecuteNonQuery (); //SI NO DEVUELVE UN 1 ES POR QUE ALGUN EVENTO HA OCURRIDO ANTES CON ESE ID
+		fillTreeview ();
 	}
 
 	protected void fillTreeview(){

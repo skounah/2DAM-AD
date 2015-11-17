@@ -22,9 +22,8 @@ namespace PArticulo
 			Guardar.Activated += delegate {
 				save();
 			};
-
-
 		}
+
 
 		private void save(){
 			IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
