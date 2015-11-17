@@ -13,41 +13,50 @@ public partial class MainWindow: Gtk.Window
 		Title = "Artículo";
 		Console.WriteLine ("MainWndow constructor.");
 		fillTreeview ();
-		
-		//TreeView.Columns();
-		//TreeView.Refresh ();
-
+	
+		//LANZADOR NUEVO ARTICULO
 		newAction.Activated += delegate{
 			new ArticuloView();
 		};
-
+		//LANZADOR ACTRUALIZAR TABLA
 		refreshAction.Activated += delegate {
 			fillTreeview();
 		};
+		//LANZADOR BORRAR ARTICULO
 		deleteAction.Activated += delegate{
 			object id = TreeViewHelper.GetId(TreeView);
 			Console.WriteLine("click en delete action id={0}", id);
 			delete(id);
 		};
+		//LANZADOR EDITAR ARTICULO (LANZA LA MISMA VENTANA QUE EL NUEVO ARTICULO)
+		editAction.Activated += delegate{
+			object id = TreeViewHelper.GetId(TreeView);
+
+			new ArticuloView(id);
+		};
+
 
 		TreeView.Selection.Changed += delegate(object sender, EventArgs e) {
 			Console.WriteLine("Cambio en el Selection action");
 			deleteAction.Sensitive = TreeViewHelper.IsSelected(TreeView); // SI NO HAY NADA SELECCIONADO NO DEJA EJECUTAR LA ACCION DE BORRAR
+			editAction.Sensitive = TreeViewHelper.IsSelected(TreeView);   // SI NO HAY NADA SELECCIONADO NO DEJA EJECUTAR LA ACCION DE EDITAR
 		};
 		deleteAction.Sensitive = false;
+		editAction.Sensitive = false;
 	}
 
-
+	//METODOS FUERA DEL MAIN 
+		//METODO DE BORRADO
 	private void delete(object id) {
 		if (!WindowHelper.ConfirmDelete(this))
 				Console.WriteLine ("Dice que eliminar NO");
 		IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
 		dbCommand.CommandText = "delete from articulo where id = @id";
-		DbCommandHelper.addParameter (dbCommand, "id", id);
-		int filasEliminadas = dbCommand.ExecuteNonQuery (); //SI NO DEVUELVE UN 1 ES POR QUE ALGUN EVENTO HA OCURRIDO ANTES CON ESE ID
+		DbCommandHelper.AddParameter (dbCommand, "id", id);
+		dbCommand.ExecuteNonQuery (); //SI NO DEVUELVE UN 1 ES POR QUE ALGUN EVENTO HA OCURRIDO ANTES CON ESE ID
 		fillTreeview ();
 	}
-
+		//RELLENO DE TABLA (REFRESH)
 	protected void fillTreeview(){
 		QueryResult queryResult = PersisterHelp.Get ("select * from articulo");
 		TreeViewHelper.Fill (TreeView, queryResult);
@@ -55,7 +64,7 @@ public partial class MainWindow: Gtk.Window
 	/*protected void OnNewActionActivated (object sender, EventArgs e) {  ESTE METODO SIRVE SI HAS ACITVADO LA SEÑAL EN EL BOTON
 		new ArticuloView();
 	}*/
-
+		//CERRADO DE VENTANA
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
 		Application.Quit ();

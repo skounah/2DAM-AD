@@ -9,7 +9,7 @@ namespace SerpisAd
 		//{
 		//}
 		
-		public static void addParameter(IDbCommand dbCommand, string name, object value){
+		public static void AddParameter(IDbCommand dbCommand, string name, object value){
 			IDbDataParameter dbDataParameter = dbCommand.CreateParameter ();
 			dbDataParameter.ParameterName = name;
 			dbDataParameter.Value = value;

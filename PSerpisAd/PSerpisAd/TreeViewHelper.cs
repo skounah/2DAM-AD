@@ -19,9 +19,9 @@ namespace SerpisAd
 				delegate(TreeViewColumn tree_column, CellRenderer cell, TreeModel tree_model, TreeIter iter) {
 					IList row = (IList)tree_model.GetValue(iter,0);
 					if (row[column] == DBNull.Value)
-						cellRendererText.Text = null;//"sin asignar" ;
+						cellRendererText.Text = null;//"sin asignar" ;LO QUE MUESTRA SI NO HAY NADA 
 					else 
-						cellRendererText.Text= row[column].ToString();
+						cellRendererText.Text= row[column].ToString();//LO QUE MUESTRA SI SI QUE HAY ALGO 
 				});
 			}
 			//RELLENO DE DATOS SEGUN EL MODELO.
