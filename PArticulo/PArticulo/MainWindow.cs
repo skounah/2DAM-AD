@@ -35,7 +35,7 @@ public partial class MainWindow: Gtk.Window
 			new ArticuloView(id);
 		};
 
-
+		//SELECCION DEL TREEVIEW
 		TreeView.Selection.Changed += delegate(object sender, EventArgs e) {
 			Console.WriteLine("Cambio en el Selection action");
 			deleteAction.Sensitive = TreeViewHelper.IsSelected(TreeView); // SI NO HAY NADA SELECCIONADO NO DEJA EJECUTAR LA ACCION DE BORRAR
@@ -46,6 +46,7 @@ public partial class MainWindow: Gtk.Window
 	}
 
 	//METODOS FUERA DEL MAIN 
+
 		//METODO DE BORRADO
 	private void delete(object id) {
 		if (!WindowHelper.ConfirmDelete(this))

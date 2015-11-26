@@ -7,7 +7,7 @@ namespace SerpisAd
 {
 	public class ComboBoxHelper
 	{
-		public static void Fill(ComboBox comboBox,QueryResult queryResult){
+		public static void Fill(ComboBox comboBox,QueryResult queryResult, object id){
 			CellRendererText cellRendererText = new CellRendererText ();
 			comboBox.PackStart (cellRendererText, false); 								
 			comboBox.SetCellDataFunc (cellRendererText, delegate(CellLayout cell_layout, CellRenderer cell, TreeModel tree_model, TreeIter iter) {	//ESTA Y LA ANTERIOR CREAN LA CAJA PARA DIBUJAR
@@ -16,11 +16,14 @@ namespace SerpisAd
 			});
 			ListStore listStore = new ListStore (typeof(IList));
 			IList first = new object[] {null, "<sin asignar>"};
-			TreeIter treeItersinAsignar =listStore.AppendValues (first); // lo guardo en un treeIter Para utilizarlo como activo en el comboiBox
-			foreach (IList row in queryResult.Rows)
-				listStore.AppendValues (row);
+			TreeIter treeIterAsignado =listStore.AppendValues (first); // lo guardo en un treeIter Para utilizarlo como activo en el comboiBox
+			foreach (IList row in queryResult.Rows) {
+				TreeIter treeIter = listStore.AppendValues (row);
+				if (row[0].Equals(id))
+					treeIterAsignado = treeIter;
+			}
 			comboBox.Model = listStore;
-			comboBox.SetActiveIter(treeItersinAsignar);
+			comboBox.SetActiveIter(treeIterAsignado);
 		}
 		public static object GetId(ComboBox comboBox) {
 			TreeIter treeIter;

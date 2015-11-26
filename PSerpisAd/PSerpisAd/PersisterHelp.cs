@@ -5,7 +5,7 @@ using System.Data;
 
 namespace SerpisAd
 {
-	public class PersisterHelp
+	public class PersisterHelp // BASICAMENTE SE USA PARA TRANSFORMAR LOS DATOS DE LA BD EN ILIST
 	{
 		public static QueryResult Get(string selectText){
 

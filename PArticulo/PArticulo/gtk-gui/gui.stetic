@@ -81,11 +81,12 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Window" id="PArticulo.ArticuloView" design-size="400 168">
+  <widget class="Gtk.Window" id="PArticulo.ArticuloView" design-size="404 168">
     <action-group name="Default">
-      <action id="Guardar">
+      <action id="saveAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes" />
+        <property name="Label" translatable="yes">saveAction</property>
+        <property name="ShortLabel" translatable="yes">saveAction</property>
         <property name="StockId">gtk-save</property>
       </action>
     </action-group>
@@ -101,7 +102,7 @@
             <property name="MemberName" />
             <property name="ShowArrow">False</property>
             <node name="barBotones" type="Toolbar">
-              <node type="Toolitem" action="Guardar" />
+              <node type="Toolitem" action="saveAction" />
             </node>
           </widget>
           <packing>

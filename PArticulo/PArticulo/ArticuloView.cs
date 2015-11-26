@@ -6,68 +6,111 @@ using System.Data;
 
 namespace PArticulo
 {
+
 	public partial class ArticuloView : Gtk.Window
 	{
-		private object id;
-		public ArticuloView () : 
-				base(Gtk.WindowType.Toplevel)
-		{
-			this.Build ();
-			//entryNombre.Text = "Introduce nombre";
-			//spinPrecio.Value = 1.0;
+		private object id = null;
+		private string nombre = "";
+		private object categoria = null;
+		private decimal precio =0;
 
-			//RELLENO DE COMBOBOX(PSERPISAD-COMBOBOXHELPER)
-			QueryResult queryResult = PersisterHelp.Get ("select * from categoria");
-			ComboBoxHelper.Fill (boxCategoria, queryResult);
+		private Articulo articulo;
 
-			Guardar.Activated += delegate { save(); };
+		//CONTRUCTOR PARA NUEVO ARTICULO
+		public ArticuloView () : base(Gtk.WindowType.Toplevel){
+			init ();
+			saveAction.Activated += delegate  { insert(); };
 		}
 
-		public ArticuloView(object id) : this(){
+		//COUNSTRUCTOR PARA EDITAR ARTICULO
+		public ArticuloView(object id) : base(Gtk.WindowType.Toplevel){
 			this.id = id;
-			load ();
+			//load ();
+			articulo = ArticuloPersister.Load (id);
+			init ();
+			//saveAction.Activated += delegate  { update(); };
 		}
 
+		//RELLENO DE COMBOBOX(PSERPISAD-COMBOBOXHELPER)
+		private void init(){
+			this.Build ();
+			entryNombre.Text = nombre;
+			QueryResult queryResult = PersisterHelp.Get ("select * from categoria");
+			ComboBoxHelper.Fill (boxCategoria, queryResult, categoria);
+			spinPrecio.Value = Convert.ToDouble (precio);
+			//saveAction.Activated += delegate  {save(); };
+		}
+
+
+		//CARGA DE LA BD LOS DATOS DEL ARTICULO SELECCIONADO
 		private void load(){
 			IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
 			dbCommand.CommandText = "select * from articulo where id = @id";
 			DbCommandHelper.AddParameter (dbCommand, "id", id);
 			IDataReader dataReader = dbCommand.ExecuteReader();
-			if (!dataReader.Read()) 
-				//TODO throw exception
+			if (!dataReader.Read())
+				//TODO Excepcion
 				return;
 
-			string nombre = (string)dataReader ["nombre"];
-			object categoria = dataReader ["categoria"];
-			decimal precio = (decimal)dataReader ["precio"];
-			dataReader.Close ();
-			entryNombre.Text = nombre;
+			nombre = (string)dataReader ["nombre"];
+			//entryNombre.Text = nombre;
+
+			categoria = dataReader ["categoria"];
 			//TODO poscionamiento en el combobox
-			spinPrecio.Value = Convert.ToDouble (precio);
+			if (categoria is DBNull)
+				categoria = null;
+
+			try {
+				precio= (decimal)dataReader["precio"];
+			}catch{
+				precio=0;	
+			}
+			//precio = (decimal)dataReader ["precio"];
+			//spinPrecio.Value = Convert.ToDouble (precio);
+
+			dataReader.Close ();
 		}
 
-		//METODO QUE GUARDA LOS DATOS DEL ARTICULOVIEW EN BD
-		private void save(){
+		//METE LOS DATOS EN BD
+		private void insert(){
 			IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
 			dbCommand.CommandText = "insert into articulo (nombre, categoria, precio) " +
 				"values(@nombre, @categoria, @precio)";
-			  //"values('nuevo articulo 69', 69, 69.5)"; PRUEBA DE FUNCIONAMIENTO EFECTUADA CON EXITO 
-
-
 			string nombre = entryNombre.Text;
 			DbCommandHelper.AddParameter (dbCommand, "nombre", nombre);
-		
+
 			object categoria = ComboBoxHelper.GetId (boxCategoria); 
 			DbCommandHelper.AddParameter (dbCommand, "categoria", categoria);
 
-			decimal precio = Convert.ToDecimal(spinPrecio.Value);
+			decimal precio = Convert.ToDecimal (spinPrecio.Value);
 			DbCommandHelper.AddParameter (dbCommand, "precio", precio);
 
-		
-			dbCommand.ExecuteNonQuery();
+			dbCommand.ExecuteNonQuery ();
 			Destroy ();
 		}
 
+	
+		//ACTUALIZA LOS DATOS DE LA BD 
+		private void update(){
+			Console.WriteLine ("update");
+			IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
+			dbCommand.CommandText = "update articulo set nombre=@nombre,categoria=@categoria, precio=@precio where id=@id";
+
+			DbCommandHelper.AddParameter (dbCommand, "id", id);
+
+			string nombre = entryNombre.Text;
+			DbCommandHelper.AddParameter (dbCommand, "nombre", nombre);
+
+			object categoria = ComboBoxHelper.GetId (boxCategoria); 
+			DbCommandHelper.AddParameter (dbCommand, "categoria", categoria);
+
+			decimal precio = Convert.ToDecimal (spinPrecio.Value);
+			DbCommandHelper.AddParameter (dbCommand, "precio", precio);
+
+
+			dbCommand.ExecuteNonQuery ();
+			Destroy ();
+		}
 	}
 }
 
