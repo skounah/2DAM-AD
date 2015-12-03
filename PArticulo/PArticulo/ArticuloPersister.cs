@@ -3,79 +3,65 @@ using System;
 using SerpisAd;
 using System.Collections;
 using System.Data;
+
 namespace PArticulo
 {
 	public class ArticuloPersister
 	{
-
-		public ArticuloPersister ()
-		{
-		}
-	
 		// CARGA LOS DATOS DE LA BD DEL ARTICULO SELECCIONADO
 		public static Articulo Load(object id){
+			Articulo articulo = new Articulo ();
+			articulo.Id = id;
+
 			IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
 			dbCommand.CommandText = "select * from articulo where id = @id";
 			DbCommandHelper.AddParameter (dbCommand, "id", id);
 			IDataReader dataReader = dbCommand.ExecuteReader();
 			if (!dataReader.Read())
+				//TODO 
 				return null;
 
-			Articulo.Nombre = (string)dataReader ["nombre"];
+			articulo.Nombre = (string)dataReader ["nombre"];
+			articulo.Categoria = get (dataReader ["categoria"], null);
+			articulo.Precio= (decimal) get (dataReader["precio"],decimal.Zero);
 
-			Articulo.Categoria = dataReader ["categoria"];
-			if (Articulo.Categoria is DBNull)
-				Articulo.Categoria = null;
-
-			try {
-				Articulo.Precio= (decimal)dataReader["precio"];
-			}catch{
-				Articulo.Precio=0;	
-			}
-		
 			dataReader.Close ();
-
-			throw new NotImplementedException ();
+			return articulo;
+		}
+		//ESTABLECE LOS VALORES POR DEFECTO
+		private static object get(object value,object defaultValue){
+			return value is DBNull ? defaultValue : value;
 		}
 
 		//INSERTA EN LA BD
-		public static void Insert(Articulo articulo){
+		public static int Insert(Articulo articulo){
 			IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
-			dbCommand.CommandText = "insert into articulo (nombre, categoria, precio) " +
-				"values(@nombre, @categoria, @precio)";
-			//string nombre = entryNombre.Text;
-			DbCommandHelper.AddParameter (dbCommand, "nombre", Articulo.Nombre);
+			dbCommand.CommandText = "insert into articulo (nombre, categoria, precio) values(@nombre, @categoria, @precio)";
 
-			//object categoria = ComboBoxHelper.GetId (boxCategoria); 
-			DbCommandHelper.AddParameter (dbCommand, "categoria", Articulo.Categoria);
+			DbCommandHelper.AddParameter (dbCommand, "nombre", articulo.Nombre);
+			DbCommandHelper.AddParameter (dbCommand, "categoria", articulo.Categoria);
+			DbCommandHelper.AddParameter (dbCommand, "precio", articulo.Precio);
 
-			//decimal precio = Convsert.ToDecimal (spinPrecio.Value);
-			DbCommandHelper.AddParameter (dbCommand, "precio", Articulo.Precio);
-
-			dbCommand.ExecuteNonQuery ();
-			//Destroy ();
+			return dbCommand.ExecuteNonQuery ();
 		}
 
 		//ACTUALIZA EN LA BD
-		public static void Update(Articulo articulo){
+		public static int Update(Articulo articulo){
 			IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
 			dbCommand.CommandText = "update articulo set nombre=@nombre,categoria=@categoria, precio=@precio where id=@id";
 
-			DbCommandHelper.AddParameter (dbCommand, "id", id);
+			DbCommandHelper.AddParameter (dbCommand, "id", articulo.Id);
+			DbCommandHelper.AddParameter (dbCommand, "nombre", articulo.Nombre);
+			DbCommandHelper.AddParameter (dbCommand, "categoria", articulo.Categoria);
+			DbCommandHelper.AddParameter (dbCommand, "precio", articulo.Precio);
 
-			//string nombre = entryNombre.Text;
-			DbCommandHelper.AddParameter (dbCommand, "nombre", Articulo.Nombre);
-
-			//object categoria = ComboBoxHelper.GetId (boxCategoria); 
-			DbCommandHelper.AddParameter (dbCommand, "categoria", Articulo.Categoria);
-
-			//decimal precio = Convert.ToDecimal (spinPrecio.Value);
-			DbCommandHelper.AddParameter (dbCommand, "precio", Articulo.Precio);
-
-
-			dbCommand.ExecuteNonQuery ();
+			return dbCommand.ExecuteNonQuery ();
 			//Destroy ();
 
+		}
+		//METODO QUE GUARDA DE DOS FORMAS SEGUN EL ID HACE UPDATE O INSERT id=NULL
+		public static int Save (Articulo articulo) {
+			return articulo.Id == null ? Insert (articulo) : Update (articulo);
 		}
 	}
 }

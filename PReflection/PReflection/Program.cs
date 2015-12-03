@@ -34,38 +34,48 @@ namespace PReflection
 			articulo.Categoria=2;
 			articulo.Precio = decimal.Parse("7.5");*/
 			setValues (articulo, new object[] { 33L, "nuevo articulo 1", 3L, decimal.Parse("11,11") }); // DEBEN IR EN EL ORDEN PUESTO EN LA CLASE DEL OBJETO
-			showType (articulo.GetType ()); // =  Type tipoFoo = typeof(Foo);  showType (tipoFoo);
+			showType (articulo.GetType ()); //IGUAL QUE Type tipoFoo = typeof(Foo);  showType (tipoFoo);
 			showObject (articulo);
 
 		}//DEL MAIN
 
-		public static void showType(Type type){
+		public static void showType(Type type){ //METODO QUE MUESTRA EL TIPO Y SUS PROPIEDADES DEL OBJETO AL QUE HACE REFERENCIA.
 			Console.WriteLine ("TIPO DE OBJETO :");
 			Console.WriteLine ("tipo= {0}, Nombre completo= {1}, Clase antecesora= {2}",
 			                   type.Name, type.FullName,type.BaseType.Name);
 			Console.WriteLine ("INFO DE PROPIEDADES :");
 			PropertyInfo[] infopropiedades = type.GetProperties ();
-			foreach (PropertyInfo infopropiedad in infopropiedades)
-				Console.WriteLine("Nombre de propiedad={0}, Informacion de propiedad={1}",infopropiedad.Name, infopropiedad.PropertyType); 
+			foreach (PropertyInfo infopropiedad in infopropiedades) {
+				if (infopropiedad.IsDefined (typeof(IdAtribute), true))											
+						Console.WriteLine ("{0} Decorado con Atributo  ", infopropiedad.Name);
+				//METODO XAPERO --- MIRAR EL METODO getCustomAtributes
+				if (infopropiedad.IsDefined (typeof(CategoriaAtribute), true))
+					Console.WriteLine ("{0} Decorado con Atributo  ", infopropiedad.Name);
+
+				Console.WriteLine ("Nombre de propiedad={0}, Informacion de propiedad={1}", infopropiedad.Name, infopropiedad.PropertyType);
+			}
 		}//DE SHOWTYPE
 
-		private static void showObject(object objeto){
+		private static void showObject(object objeto){ // METODO QUE MUESTRA LOS VALORES DE UN OBJETO 
 			Type type = objeto.GetType ();
 			PropertyInfo[] infopropiedades = type.GetProperties ();
+		
 			Console.WriteLine ("VALORES DE LAS PROPIEDADES : ");
-			foreach (PropertyInfo infopropiedad in infopropiedades)
-				Console.WriteLine("{0}={1}",infopropiedad.Name, infopropiedad.GetValue(objeto, null));
+			foreach (PropertyInfo infopropiedad in infopropiedades) {
+				Console.WriteLine ("{0} ={1}", infopropiedad.Name, infopropiedad.GetValue (objeto, null)); //EL NULL SIRVE PARA PROPIEDADES INDIZADAS (INDICES DE ARRAYS)
+			}
 		}//DE SHOW OBJECT
 
-		private static void setValues(object objeto, object[] values){
+		private static void setValues(object objeto, object[] values){ //METDODO PARA INTROUCIR VALORES(en array) A UN OBJETO
 			Type type = objeto.GetType ();
 			int index = 0;
 			PropertyInfo[] infopropiedades = type.GetProperties ();
 			foreach (PropertyInfo infopropiedad in infopropiedades)
 				infopropiedad.SetValue(objeto, values [index++],null);
-		}//DE SETVALUES
 
-	}//DE LA CLASE
+		}//DE SETVALUES
+	}//DE LA CLASE MAIN
+
 
 	public class Foo{
 		private string name;
@@ -85,11 +95,12 @@ namespace PReflection
 			get { return id; }
 			set { id = value; }
 		}
-	}
+	}//DE LA CLASE FOO
 
+	//[TablaAtribute (Name="Tabla")]
 	public class Articulo
 	{
-		public Articulo ()
+		public Articulo () //CONTRUCTOR VACIO
 		{
 		}
 
@@ -99,7 +110,7 @@ namespace PReflection
 		private object categoria;
 		private decimal precio;
 
-
+		[IdAtribute]
 		public object Id {
 			get{ return id; }
 			set{ id = value; }
@@ -110,7 +121,7 @@ namespace PReflection
 			set{ nombre = value; }
 		}
 
-
+		[CategoriaAtribute]
 		public object Categoria {
 			get{ return categoria; }
 			set{ categoria = value; }
@@ -120,5 +131,10 @@ namespace PReflection
 			get{ return precio; }
 			set{ precio = value; }
 		}
-	}
+	} //DE LA CLASE ARITCULO 
+
+	// CREA ATRIBUTOS PERSONALIZADOS (DECORACIONES)
+	public class IdAtribute: Attribute { }
+	public class TablaAtribute: Attribute { }
+	public class CategoriaAtribute: Attribute { }
 }

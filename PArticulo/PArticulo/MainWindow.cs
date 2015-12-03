@@ -49,22 +49,22 @@ public partial class MainWindow: Gtk.Window
 
 		//METODO DE BORRADO
 	private void delete(object id) {
-		if (!WindowHelper.ConfirmDelete(this))
-				Console.WriteLine ("Dice que eliminar NO");
-		IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
-		dbCommand.CommandText = "delete from articulo where id = @id";
-		DbCommandHelper.AddParameter (dbCommand, "id", id);
-		dbCommand.ExecuteNonQuery (); //SI NO DEVUELVE UN 1 ES POR QUE ALGUN EVENTO HA OCURRIDO ANTES CON ESE ID
-		fillTreeview ();
+		if (!WindowHelper.ConfirmDelete (this)) {
+			Console.WriteLine ("Cancelado el borrado");
+		} else {
+			IDbCommand dbCommand = App.Instance.DbConnection.CreateCommand ();
+			dbCommand.CommandText = "delete from articulo where id = @id";
+			DbCommandHelper.AddParameter (dbCommand, "id", id);
+			dbCommand.ExecuteNonQuery (); //SI NO DEVUELVE UN 1 ES POR QUE ALGUN EVENTO HA OCURRIDO ANTES CON ESE ID
+			fillTreeview ();
+		}
 	}
 		//RELLENO DE TABLA (REFRESH)
 	protected void fillTreeview(){
 		QueryResult queryResult = PersisterHelp.Get ("select * from articulo");
 		TreeViewHelper.Fill (TreeView, queryResult);
 	}
-	/*protected void OnNewActionActivated (object sender, EventArgs e) {  ESTE METODO SIRVE SI HAS ACITVADO LA SEÑAL EN EL BOTON
-		new ArticuloView();
-	}*/
+
 		//CERRADO DE VENTANA
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{

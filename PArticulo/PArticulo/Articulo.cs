@@ -32,7 +32,7 @@ namespace PArticulo
 
 		public decimal Precio {
 			get{ return precio; }
-			set{ id = value; }
+			set{ precio = value; }
 		}
 	}
 }
