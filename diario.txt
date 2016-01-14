@@ -1,3 +1,23 @@
+2015.12.10
+Instalacion Eclipse --> Los pasos los tengo en archivo Drive.
+Creacion primer proyecto Gholamundo (Graddle).
+
+2015.11.05
+PArticulo
+ Refresh
+ Delete
+ Update
+PCategoria
+ Básica
+ Completa
+
+2015.09.29
+añadida foreing de articulo categoria a categoria id
+
+2015.09.24
+instalar
+ monodoc-mysql-manual
+
 2015.09.22
 insertar registros en artículo y categoría:
  articulo.sql
