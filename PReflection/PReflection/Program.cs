@@ -7,6 +7,7 @@ namespace PReflection
 	{
 		public static void Main (string[] args)
 		{
+			//PRUEBAS DE TIPOS DE DATOS
 			/*int i=11;
 			Type tipo = i.GetType ();
 			//Console.WriteLine ("tipo.Name={0}, {1}", tipo.Name,tipo.FullName); ES PARA HACER REFERENCIA A LO DE DESOPUES DE LA COMA [0,1,2,3...]
