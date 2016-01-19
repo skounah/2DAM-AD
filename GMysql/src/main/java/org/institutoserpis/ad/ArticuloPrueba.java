@@ -204,7 +204,7 @@ public class ArticuloPrueba {
 
 			try{
 				opcion = leer.nextInt();
-			}catch (InputMismatchException e){
+	 		}catch (InputMismatchException e){
 				System.out.println("DEBES INTRODUCIR NUMEROS ENTEROS");
 			}
 			leer.nextLine();
