@@ -5,6 +5,8 @@ using PArticulo;
 using SerpisAd;
 using System.Collections;
 
+//VERSION FINAL
+
 public partial class MainWindow: Gtk.Window
 {	
 	public MainWindow (): base (Gtk.WindowType.Toplevel)
