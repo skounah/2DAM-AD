@@ -60,7 +60,7 @@ public class ArticuloPrueba {
 		
 	}
 	
-	//METODO SELECCION //REVISAAAAAR PECADOOR!!!!!
+	//METODO SELECCION //REVISAR!!!
 	public static void select() throws SQLException{
 		
 		
@@ -186,6 +186,15 @@ public class ArticuloPrueba {
 		selectAllPreparedStatement = (PreparedStatement) connection.prepareStatement(selectAllsql);
 		ResultSet result= selectAllPreparedStatement.executeQuery(selectAllsql);
 		//ACABAR
+		System.out.println("   ID		NOMBRE 		  CATEGORIA 	 	PRECIO");
+		System.out.println("---------------------------------------------------------------");
+		/*for (ArticuloPrueba articulo : articulos)
+			System.out.printf("%5s %20s %15s %20s\n", 
+					articulo.getId(), 
+					articulo.getNombre(), 
+					articulo.getCategoria(), 
+					articulo.getPrecio()
+			);*/
 	}
 	
 	
