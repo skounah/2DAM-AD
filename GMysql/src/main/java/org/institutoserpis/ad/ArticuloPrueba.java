@@ -19,6 +19,9 @@ public class ArticuloPrueba {
 	static PreparedStatement selectPreparedStatement; //SELECT
 	static PreparedStatement selectAllPreparedStatement;//SELECTALL
 	
+	//SCANNER
+	private static Scanner scan = new Scanner(System.in);
+	
 	// DATOS DE ARTICULO + METODO MOSTRAR ARTICULO
 	String nombre;
 	int categoria;
@@ -41,6 +44,7 @@ public class ArticuloPrueba {
 		return connection;
 	}
 	
+	//METODO PARA PODER CERRAR LAS SENTENCIAS SQL
 	public static void cerrarStatements() throws SQLException{
 		if(insertPreparedStatement!=null)
 			insertPreparedStatement.close();
@@ -58,7 +62,7 @@ public class ArticuloPrueba {
 	
 	//METODO SELECCION //REVISAAAAAR PECADOOR!!!!!
 	public static void select() throws SQLException{
-		Scanner scan = new Scanner(System.in);
+		
 		
 		System.out.println("--------------------------------------------------");
 		System.out.println("Introduce el id del Articulo que quieres consultar :");
@@ -82,21 +86,21 @@ public class ArticuloPrueba {
 	//METODO PARA INSERTAR A BD
 	public static void insert() throws SQLException{
 		try{
-			Scanner scann = new Scanner(System.in);
+			
 			String nuevosql = "insert into articulo (nombre, categoria, precio) values (?,?,?)";
 			
 			System.out.println("------------------------------------------");
 			String nombre;
 			System.out.print("Introduzca nombre del nuevo articulo: ");	
-			nombre = scann.nextLine();
+			nombre = scan.nextLine();
 		
 			int categoria;
 			System.out.print("Introduzca categoria del nuevo articulo. [1, 2, 3]: ");
-			categoria = scann.nextInt();
+			categoria = scan.nextInt();
 	
 			double precio;
 			System.out.print("Introduzca precio del nuevo articulo: ");
-			precio = scann.nextDouble();
+			precio = scan.nextDouble();
 			
 			//CAMBIAMOS LOS ??? DE NUEVOSQL POR LOS VALORES INTRODUCIDOS POR TECLADO //MODELO PARA SENTENCIAS SQL
 			if(insertPreparedStatement==null)
@@ -114,26 +118,26 @@ public class ArticuloPrueba {
 	//METODO PARA ACTUALIZAR LA BD
 	public static void update()throws Throwable{ //LOS TRHOWS DE EXCEPCIONES SON PARA TIPOS DE DATOS INTRODUCIDOS(SCAN) INCORRECTOS.
 		String updatesql ="update articulo set nombre = ?, categoria = ?, precio = ? where id = ?";
-		Scanner scann = new Scanner(System.in);
+		
 		
 		//System.out.println("--------------------------------------------------------------");
 		try{
 			int id;
 			System.out.println("Introduce el id del Articulo que quieres modificar :");
-			id= scann.nextInt();
-			scann.nextLine();
+			id= scan.nextInt();
+			scan.nextLine();
 			
 			String nombre;
 			System.out.println("Introduzca nuevo nombre del articulo: ");	
-			nombre = scann.nextLine();
+			nombre = scan.nextLine();
 	
 			int categoria;
 			System.out.println("Introduzca nueva categoria del articulo. [1, 2, 3]: ");
-			categoria = scann.nextInt();
+			categoria = scan.nextInt();
 			
 			double precio;
 			System.out.println("Introduzca nuevo precio del nuevo articulo: ");
-			precio = scann.nextDouble();
+			precio = scan.nextDouble();
 		
 			if(updatePreparedStatement==null)
 				updatePreparedStatement = (PreparedStatement) connection.prepareStatement(updatesql);
@@ -188,7 +192,6 @@ public class ArticuloPrueba {
 	public static void main(String[] args) throws Throwable {
 		conection(); 
 		//// MENU PRINCIPAL - CONTROL SOBRE LA BD ////
-		Scanner leer = new Scanner(System.in);
 		int opcion=-1;
 		do{
 			System.out.println("");
@@ -203,11 +206,11 @@ public class ArticuloPrueba {
 			System.out.print("SELECCIONE UNA OPCION : ");
 
 			try{
-				opcion = leer.nextInt();
+				opcion = scan.nextInt();
 	 		}catch (InputMismatchException e){
 				System.out.println("DEBES INTRODUCIR NUMEROS ENTEROS");
 			}
-			leer.nextLine();
+			scan.nextLine();
 			switch (opcion) {
 			case 1:
 				select();
