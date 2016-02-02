@@ -3,8 +3,12 @@ package org.institutoserpis.ad;
 import java.math.BigDecimal;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -12,7 +16,7 @@ public class Articulo {
 	
 	private Long id; //EL TIPO LONG DESCIENDE DE LA CLASE LONG QUE SI PERMITE NULOS AL CONTRARIO DE LA long
 	private String nombre;
-	private Long categoria;
+	private Categoria categoria;
 	private BigDecimal precio;
 	
 	@Id
@@ -30,10 +34,12 @@ public class Articulo {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	public Long getCategoria() {
+	@ManyToOne(fetch=FetchType.LAZY) //LAZY SOLO LEE SI LO NECESITA. EL OTRO TPO ES EAGUER Y LEE SIEMPRE AUNQUE NO LO NECESITE
+	@JoinColumn(name="categoria")
+	public Categoria getCategoria() {
 		return categoria;
 	}
-	public void setCategoria(Long categoria) {
+	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
 	public BigDecimal getPrecio() {
